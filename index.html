@@ -131,12 +131,32 @@ function newFight(){
 function setBars(){document.getElementById("playerHp").style.width=player+"%";document.getElementById("enemyHp").style.width=enemy+"%"}
 async function attack(){
   if(player<=0||enemy<=0)return;
-  enemy=Math.max(0,enemy-Math.floor(Math.random()*19)+12);setBars();
-  if(enemy===0){toast("🏆 فوز!");await changeScore(25,1,0);return}
-  setTimeout(async()=>{
-    player=Math.max(0,player-Math.floor(Math.random()*19)+12);setBars();
-    if(player===0){toast("💀 خسرت! حاول مرة أخرى.");await changeScore(-15,0,1)}
-  },350);
+
+  // الاثنين يتضرران في نفس اللحظة
+  const playerDamage = Math.floor(Math.random()*19)+12;
+  const enemyDamage = Math.floor(Math.random()*19)+12;
+
+  player = Math.max(0, player - playerDamage);
+  enemy = Math.max(0, enemy - enemyDamage);
+
+  setBars();
+
+  if(enemy===0 && player===0){
+    toast("⚔️ تعادل!");
+    return;
+  }
+
+  if(enemy===0){
+    toast("🏆 فوز!");
+    await changeScore(25,1,0);
+    return;
+  }
+
+  if(player===0){
+    toast("💀 خسرت! حاول مرة أخرى.");
+    await changeScore(-15,0,1);
+    return;
+  }
 }
 async function changeScore(delta,w,l){
   if(!playerId)return;
